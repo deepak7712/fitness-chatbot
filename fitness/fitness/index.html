@@ -1,0 +1,327 @@
+<!c9poDOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1.0"/>
+  <title>Fitness Assistant</title>
+  <style>
+    body {
+      margin: 0;
+      font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+      /* background: linear-gradient(135deg, #d9f2e6, #ffffff); */
+      background-image: url(/fitness/pexels-victorfreitas-791763.jpg);
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      height: 100vh;
+      background-attachment: fixed;
+    }
+
+    .chat-container {
+      width: 95%;
+      max-width: 480px;
+      background: #fff;
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      overflow: hidden;
+      display: flex;
+      flex-direction: column;
+    }
+
+    .chat-header {
+      background-color: #3bc177;
+      color: white;
+      padding: 20px;
+      text-align: center;
+    }
+
+    .chat-header h1 {
+      margin: 0; 
+      font-size: 24px;
+    }
+
+    .chat-header p {
+      font-size: 14px;
+      margin-top: 6px;
+    }
+
+    .header-images {
+      display: flex;
+      justify-content: center;
+      gap: 10px;
+      padding: 10px;
+      background: #e8fce8;
+    }
+
+    .header-images img {
+      width: 60px;
+      height: 60px;
+      object-fit: cover;
+      border-radius: 50%;
+      border: 2px solid #3bc177;
+    }
+
+    .chat-messages {
+      padding: 15px;
+      height: 320px;
+      overflow-y: auto;
+      background-color: #f6f6f6;
+      flex-grow: 1;
+    }
+
+    .message {
+      margin: 12px 0;
+      padding: 10px 14px;
+      border-radius: 12px;
+      max-width: 75%;
+      position: relative;
+      line-height: 1.4;
+    }
+
+    .user-message {
+      background-color: #d1f2eb;
+      align-self: flex-end;
+      margin-left: auto;
+    }
+
+    .bot-message {
+      background-color: #fff;
+      border: 1px solid #d6eaf8;
+      align-self: flex-start;
+      margin-right: auto;
+    }
+
+    .message-time {
+      font-size: 11px;
+      color: #888;
+      text-align: right;
+      margin-top: 4px;
+    }
+
+    .chat-input {
+      display: flex;
+      border-top: 1px solid #ccc;
+      padding: 10px;
+      background-color: #fafafa;
+    }
+
+    #user-input {
+      flex-grow: 1;
+      padding: 10px;
+      border: 1px solid #ccc;
+      border-radius: 12px;
+      font-size: 14px;
+    }
+
+    #send-btn {
+      background-color: #3bc177;
+      border: none;
+      color: white;
+      padding: 10px 16px;
+      margin-left: 8px;
+      border-radius: 12px;
+      cursor: pointer;
+    }
+
+    #send-btn:hover {
+      background-color: #31a966;
+    }
+
+    .typing-indicator {
+      background-color: #fff;
+      border: 1px solid #d6eaf8;
+      border-radius: 12px;
+      padding: 10px 14px;
+      display: flex;
+      gap: 4px;
+      align-self: flex-start;
+      margin-right: auto;
+    }
+
+    .typing-indicator span {
+      width: 6px;
+      height: 6px;
+      background-color: #ccc;
+      border-radius: 50%;
+      animation: typing 1s infinite ease-in-out;
+    }
+
+    .typing-indicator span:nth-child(2) {
+      animation-delay: 0.2s;
+    }
+
+    .typing-indicator span:nth-child(3) {
+      animation-delay: 0.4s;
+    }
+
+    @keyframes typing {
+      0%, 100% {
+        transform: translateY(0);
+      }
+      50% {
+        transform: translateY(-5px);
+      }
+    }
+  </style>
+</head>
+<body>
+
+  <div class="chat-container">
+    <div class="chat-header">
+      <h1>Fitness Assistant</h1>
+      <p>Ask me anything about fitness, nutrition, or health</p>
+    </div>
+
+    <div class="header-images">
+      <img src="https://cdn.shopify.com/s/files/1/0561/9253/2651/files/InlineImage1.jpg?v=1628756402" alt="Fitness 1">
+      <img src="https://m.media-amazon.com/images/I/81BJw7tSaFL._AC_UF350,350_QL80_.jpg" alt="Fitness 2">
+      <img src="https://encrypted-tbn0.gstatic.com/images?q=tbn:ANd9GcTAGkZ6b3g6Qk_OTDYakHzBPaxE3x6YbD4xlA&s" alt="Fitness 3">
+    </div>
+
+    <div class="chat-messages" id="chat-messages"></div>
+
+    <div class="chat-input">
+      <input type="text" id="user-input" placeholder="Type your fitness question here..." autocomplete="off">
+      <button id="send-btn">Send</button>
+    </div>
+  </div>
+
+  <script>
+    document.addEventListener('DOMContentLoaded', function() {
+      addBotMessage("Hello! I'm your Fitness Assistant. How can I help you with your fitness goals today?");
+    });
+
+    function addUserMessage(message) {
+      const chatMessages = document.getElementById('chat-messages');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message user-message';
+      const messageContent = document.createElement('div');
+      messageContent.textContent = message;
+      const messageTime = document.createElement('div');
+      messageTime.className = 'message-time';
+      messageTime.textContent = getCurrentTime();
+      messageDiv.appendChild(messageContent);
+      messageDiv.appendChild(messageTime);
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function addBotMessage(message) {
+      const chatMessages = document.getElementById('chat-messages');
+      const messageDiv = document.createElement('div');
+      messageDiv.className = 'message bot-message';
+      const messageContent = document.createElement('div');
+      messageContent.innerHTML = formatMessage(message);
+      const messageTime = document.createElement('div');
+      messageTime.className = 'message-time';
+      messageTime.textContent = getCurrentTime();
+      messageDiv.appendChild(messageContent);
+      messageDiv.appendChild(messageTime);
+      chatMessages.appendChild(messageDiv);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function getCurrentTime() {
+      const now = new Date();
+      return now.toLocaleTimeString([], { hour: '2-digit', minute: '2-digit' });
+    }
+
+    function formatMessage(message) {
+      message = message.replace(/\*\*(.*?)\*\*/g, '<strong>$1</strong>');
+      message = message.replace(/\*(.*?)\*/g, '<em>$1</em>');
+      message = message.replace(/\n/g, '<br>');
+      return message;
+    }
+
+    function showTypingIndicator() {
+      const chatMessages = document.getElementById('chat-messages');
+      const typingIndicator = document.createElement('div');
+      typingIndicator.className = 'message bot-message typing-indicator';
+      typingIndicator.innerHTML = '<span></span><span></span><span></span>';
+      typingIndicator.id = 'typing-indicator';
+      chatMessages.appendChild(typingIndicator);
+      chatMessages.scrollTop = chatMessages.scrollHeight;
+    }
+
+    function hideTypingIndicator() {
+      const typingIndicator = document.getElementById('typing-indicator');
+      if (typingIndicator) {
+        typingIndicator.remove();
+      }
+    }
+
+    async function sendMessage() {
+      const userInput = document.getElementById('user-input');
+      const message = userInput.value.trim();
+      if (!message) return;
+
+      const apiKey = "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";
+
+      addUserMessage(message);
+      userInput.value = '';
+      showTypingIndicator();
+
+      try {
+        const now = new Date();
+        const day = now.toLocaleDateString('en-US', { weekday: 'long' });
+        const date = now.getDate();
+        const month = now.toLocaleDateString('en-US', { month: 'long' });
+        const year = now.getFullYear();
+        const hours = now.getHours().toString().padStart(2, '0');
+        const minutes = now.getMinutes().toString().padStart(2, '0');
+        const seconds = now.getSeconds().toString().padStart(2, '0');
+
+        const realtimeInfo = `Please use this real-time information if needed,\nDay: ${day}\nDate: ${date}\nMonth: ${month}\nYear: ${year}\nTime: ${hours}:${minutes}:${seconds}`;
+
+        const systemPrompt = `Hello, I am User, You are a very accurate and advanced AI chatbot named FitnessBot which also has real-time up-to-date information from the internet.
+*** Do not tell time until I ask, do not talk too much, just answer the question.***
+*** Reply in only English, even if the question is in Hindi, reply in English.***
+*** Do not provide notes in the output, just answer the question and never mention your training data. ***`;
+
+        const messages = [
+          { role: "system", content: systemPrompt },
+          { role: "system", content: realtimeInfo },
+          { role: "user", content: message }
+        ];
+
+        const response = await fetch('https://api.groq.com/openai/v1/chat/completions', {
+          method: 'POST',
+          headers: {
+            'Authorization': `Bearer ${apiKey}`,
+            'Content-Type': 'application/json'
+          },
+          body: JSON.stringify({
+            model: "llama3-70b-8192",
+            messages: messages,
+            temperature: 0.7,
+            max_tokens: 1024,
+            top_p: 1,
+            stream: false
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error(`API request failed with status ${response.status}`);
+        }
+
+        const data = await response.json();
+        const answer = data.choices[0].message.content;
+
+        hideTypingIndicator();
+        addBotMessage(answer);
+      } catch (error) {
+        console.error('Error:', error);
+        hideTypingIndicator();
+        addBotMessage("Sorry, I encountered an error. Please check your API key and try again.");
+      }
+    }
+
+    document.getElementById('send-btn').addEventListener('click', sendMessage);
+    document.getElementById('user-input').addEventListener('keypress', function(e) {
+      if (e.key === 'Enter') {
+        sendMessage();
+      }
+    });
+  </script>
+</body>
+</html>
